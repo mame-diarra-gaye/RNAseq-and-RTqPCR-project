@@ -1,0 +1,220 @@
+---
+title: "TP_Partie1_RT-qPCR"
+output: html_document
+date: "2024-02-22"
+---
+
+## Charger les packages
+
+```{r}
+library(tidyverse)
+```
+
+
+## Charger les données
+```{r}
+RTqPCR_dat <- read.csv("RT-qPCR_data.txt")
+```
+
+### dimension data
+```{r}
+dim(RTqPCR_dat)
+head(RTqPCR_dat, n = 10)
+tail(RTqPCR_dat, n = 10)
+```
+
+
+```{r}
+RTqPCR_dat_long <- RTqPCR_dat |> pivot_longer(cols = 2:13, names_to = "condition", values_to = "Ct")
+head(RTqPCR_dat_long)
+
+```
+
+## Ajout de metadata
+
+```{r}
+metadata1 <-read.csv(file = "fonction_gène.txt", sep = "\t")
+head(metadata1)
+```
+
+
+```{r}
+RTqPCR_dat_long_meta1 <- merge(x = RTqPCR_dat_long, y = metadata1, by = "Gene")
+head(RTqPCR_dat_long_meta1)
+```
+
+```{r}
+metadata2 <-str_split_fixed(RTqPCR_dat_long_meta1$condition, "_", 2)
+colnames(metadata2) <- c("echantillon", "bioRep")
+
+head(metadata2)
+dim(metadata2)
+```
+
+
+
+```{r}
+RTqPCR_dat_long_meta2 <- cbind.data.frame(RTqPCR_dat_long_meta1, metadata2)
+head(RTqPCR_dat_long_meta2)
+```
+
+```{r}
+RTqPCR_median <- RTqPCR_dat_long_meta2 |> group_by(condition, Gene) |> mutate(MedCt = median(Ct))
+head(RTqPCR_median)
+```
+```{r}
+RTqPCR_median_clean <- RTqPCR_median |> group_by(condition, Gene) |> distinct(condition, .keep_all = TRUE) #on va selectioner l'échantillon median à chaque fois
+tail(RTqPCR_median_clean)
+dim(RTqPCR_median_clean)
+```
+
+```{r}
+RTqPCR_mean <- RTqPCR_median_clean |> group_by(condition,Gene) |> mutate(MeanCt = mean(Ct))
+
+head(RTqPCR_mean)
+```
+```{r}
+RTqPCR_mean_clean <- RTqPCR_mean |> select(-Ct)
+head(RTqPCR_mean_clean)
+```
+# Calcul du deltaCt
+```{r}
+library(ggpubr)
+RtqPCR_GDM <- RTqPCR_mean_clean |> filter(Fonction == "GDM")
+head(RtqPCR_GDM)
+
+ggboxplot(RtqPCR_GDM, x = "echantillon", y = "MedCt", ylim = c(15, 30), fill = "echantillon", palette = c("lightblue", "lightgreen", "orange", "pink"), add=c("jitter"))
+ggboxplot(RtqPCR_GDM, x = "echantillon", y = "MedCt", ylim = c(15, 30), fill = "echantillon", palette = "lancet")
+ggboxplot(RtqPCR_GDM, x = "echantillon", y = "MedCt", ylim = c(15, 30), fill = "echantillon", palette = "npg")
+
+ggsave("boxplot_medct_gdm.png", width = 6, height = 5, dpi = 300)
+
+```
+
+
+```{r}
+RtqPCR_GDM_clean <- RtqPCR_GDM |> ungroup() |> select(c(condition, MedCt))
+colnames(RtqPCR_GDM_clean) <- c("condition", "MedCt_GDM")
+head(RtqPCR_GDM_clean)
+
+RTqPCR_merge_GDM <- merge(x = RTqPCR_mean_clean, y = RtqPCR_GDM_clean, by = "condition")
+head(RTqPCR_merge_GDM)
+
+```
+```{r}
+RTqPCR_dCt <- RTqPCR_merge_GDM |> mutate("dCt" = MedCt - MedCt_GDM)
+head(RTqPCR_dCt)
+```
+# nettoyage des objet
+```{r}
+rm(list = setdiff(x = ls(), y = c("RTqPCR_dCt")))
+```
+
+# calculer les ddCt
+```{r}
+# extraire les données de l'échantillon1
+RTqPCR_dCt_Ech1 <-  RTqPCR_dCt |> filter(echantillon == "Ech1") |>
+  group_by(Gene) |>
+  mutate(MeanCt_Ech1 = mean(MedCt)) |>
+  distinct(Gene, .keep_all = TRUE) |>
+  ungroup() |>
+  select(Gene, MeanCt_Ech1, MedCt_GDM) |>
+  mutate(dCt_Ech1 = MeanCt_Ech1 - MedCt_GDM)
+
+head(RTqPCR_dCt_Ech1)
+
+```
+
+```{r}
+RTqPCR_ddCt <- merge(RTqPCR_dCt, RTqPCR_dCt_Ech1, by = "Gene")
+head(RTqPCR_ddCt)
+
+```
+
+
+```{r}
+RTqPCR_ddCt <- RTqPCR_ddCt |> mutate(TWO_ddCt = 2^(-(dCt - dCt_Ech1)))
+head(RTqPCR_ddCt)
+```
+
+# PCA
+```{r}
+# transformer le tableau en tableau wide avec les gènes dans les colonnes et les échantillons dans les lignes
+RTqPCR_for_PCA <- RTqPCR_ddCt |> select(condition, Gene, dCt)
+head(RTqPCR_for_PCA)
+```
+
+```{r}
+RTqPCR_for_PCA_wide <- RTqPCR_for_PCA |> pivot_wider(names_from = Gene, values_from = dCt)
+head(RTqPCR_for_PCA_wide)
+```
+
+```{r}
+# calculer les CP
+PCA_data <- RTqPCR_for_PCA_wide |> select(where(is.numeric)) |> prcomp()
+head(PCA_data)
+
+
+# créer un tableau de metadata avec le nom des échantillons et des réplicats
+metadata3 <- str_split_fixed(RTqPCR_for_PCA_wide$condition, pattern = "_", n= 2)
+colnames(metadata3) <- c("echantillon", "bioRep")
+
+# ajouter les coordonnées des PCs et les métadata au tableau de PCA
+PCA_data_PC <- cbind.data.frame(RTqPCR_for_PCA_wide, PCA_data$x[,1:3], metadata3)
+head(PCA_data_PC)
+
+```
+
+```{r}
+sdev <- data.frame(sd = PCA_data$sdev) |>  mutate(pct = 100 * (sd/sum(sd))) 
+head(sdev)
+
+ggscatter(PCA_data_PC, x = "PC1", y = "PC2", color = "echantillon", 
+          xlab = paste0("PC1 (", round(sdev$pct[1]), "%)"), 
+          ylab = paste0("PC2 (", round(sdev$pct[2]), "%)")
+          )+
+          theme(aspect.ratio = 1)
+ggsave("PCA_PC1_PC2_par_echantillon.png", width = 6, height = 5, dpi = 300)
+
+
+
+ggscatter(PCA_data_PC, x = "PC1", y = "PC2", color = "bioRep", 
+          xlab = paste0("PC1 (", round(sdev$pct[1]), "%)"), 
+          ylab = paste0("PC2 (", round(sdev$pct[2]), "%)")
+          )+
+          theme(aspect.ratio = 1)
+
+ggsave("PCA_PC1_PC2_par_bioRep.png", width = 6, height = 5, dpi = 300)
+
+
+
+ggscatter(PCA_data_PC, x = "PC1", y = "PC3", color = "echantillon", 
+          xlab = paste0("PC1 (", round(sdev$pct[1]), "%)"), 
+          ylab = paste0("PC3 (", round(sdev$pct[3]), "%)")
+          )+
+          theme(aspect.ratio = 1)
+ggsave("PCA_PC1_PC3_par_echantillon.png", width = 6, height = 5, dpi = 300)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
