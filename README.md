@@ -1,26 +1,35 @@
 # RNAseq-and-RTqPCR-project
-Script R et visualisations du projet RNA-Seq mené en licence 3
 
-Ce dépôt présente un projet académique réalisé en Licence 3, dans le cadre d’un TD sur l’analyse de données transcriptomiques.
+Script R et visualisations du projet combiné RNA-Seq et RT-qPCR mené en Licence 3.
 
-## Objectif
+Ce dépôt présente un projet académique réalisé dans le cadre d’un TD sur l’analyse de données transcriptomiques et l’interprétation de profils d’expression génique à l’aide du langage R.
 
-Explorer les profils d’expression génique à partir de données RNA-Seq et RT-qPCR à différents stades cellulaires, en utilisant R et divers packages statistiques.
+##  Objectif
 
-## Outils utilisés
+Explorer et comparer les profils d’expression génique à partir de données RT-qPCR et RNA-Seq, à différents stades cellulaires ou types de tissus. L’objectif est d’utiliser des approches statistiques et graphiques pour extraire des informations biologiques pertinentes.
 
-- DESeq2, tidyverse, dplyr, tidyr, ggplot2, ggpbur
-  
+##  Outils utilisés
 
-## Ce que j’ai appris
+- DESeq2 : analyse différentielle des gènes à partir des données RNA-Seq
+- ggplot2, ggpubr : visualisations graphiques
+- tidyverse : manipulation de données
+- ComplexHeatmap : visualisation de matrices d’expression
+- clusterProfiler, org.Mm.eg.db : enrichissement fonctionnel (Gene Ontology)
+- goseq : analyse d’enrichissement GO complémentaire
 
-- Lire et nettoyer des données transcriptomiques
-- Réaliser des visualisations claires (ggplot2)
-- Utiliser R pour explorer des jeux de données biologiques
+##  Ce que j’ai appris
 
-## Avertissement
+- Lire, nettoyer et formater des jeux de données transcriptomiques (RT-qPCR et RNA-Seq)
+- Réaliser des visualisations adaptées (boxplots, ACP, heatmaps, MA plot, GO enrichment…)
+- Utiliser `DESeq2` pour l’analyse différentielle
+- Identifier des gènes significativement exprimés
+- Réaliser des analyses d’enrichissement fonctionnel avec `clusterProfiler`
+- Interpréter des résultats biologiques à partir de données statistiques
+- Organiser un projet reproductible avec RMarkdown et GitHub
 
-Ce projet a été réalisé à des fins d’apprentissage dans le cadre universitaire.
+
+Ce projet a été réalisé à des fins d’apprentissage dans le cadre d’un enseignement universitaire. 
+
 
 
 ##  Visualisations
@@ -92,3 +101,10 @@ Cette heatmap donne une vue globale de la variabilité des 100 gènes les plus e
 Les gènes différentiellement exprimés ont été soumis à une analyse d’enrichissement GO. Les processus biologiques enrichis sont représentés ci-dessous.
 
 ![GO enrichment dotplot](GO_Enrichment_dotplot.png)
+
+---
+
+##  Conclusion
+
+Ce projet m’a permis de développer des compétences pratiques en analyse transcriptomique avec R. L’approche combinée RNA-Seq et RT-qPCR m’a aidé à mieux comprendre la complémentarité entre technologies haut-débit et validation ciblée. Ce travail illustre les étapes clés d’un pipeline d’analyse omique reproductible.
+
