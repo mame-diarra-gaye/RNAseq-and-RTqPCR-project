@@ -53,3 +53,58 @@ Cette projection permet de mieux visualiser la contribution du troisième axe da
 
 ![PC1-PC3 échantillons](PCA_PC1_PC3_par_echantillon.png)
 
+---
+
+##  Analyse RNA-Seq
+
+L’analyse RNA-Seq a été réalisée pour détecter les gènes différentiellement exprimés entre différents tissus (foie, rein, cervelet) à l’aide du package **DESeq2**. Plusieurs visualisations ont été produites pour interpréter les résultats.
+
+---
+
+###  PCA sur les échantillons RNA-Seq
+
+Une analyse en composantes principales (ACP) a été effectuée après transformation par variance stabilisée (`vst`) pour explorer la variance globale des données.
+
+![PCA RNAseq](PCA_Plot_source_name.png)
+
+---
+
+###  Plot MA
+
+Le graphique MA permet de visualiser les gènes exprimés différemment en fonction de leur niveau d'expression moyen.
+
+![MA Plot](MA_plot_deseq2.png)
+
+---
+
+###  Volcano Plot (ggmaplot)
+
+Le `ggmaplot` met en évidence les gènes significativement sur- ou sous-exprimés. Les gènes les plus différenciés sont annotés.
+
+![ggmaplot](ggmaplot_deseq2.png)
+
+---
+
+###  Heatmap des 30 gènes les plus variables
+
+Une carte de chaleur a été générée à partir des 30 gènes les plus variables parmi ceux significativement exprimés.
+
+![Heatmap top30](heatmap_top30.png)
+
+---
+
+###  Heatmap des 100 premiers gènes exprimés
+
+Une deuxième carte de chaleur montre l’expression des 100 gènes les plus fortement exprimés, permettant d'observer les regroupements entre échantillons.
+
+![Heatmap 100 gènes](heatmap_top100.png)
+
+---
+
+###  Enrichissement fonctionnel (GO)
+
+L’enrichissement en ontologies biologiques (GO) a été réalisé avec `clusterProfiler`. Les processus biologiques surreprésentés chez les gènes différentiellement exprimés ont été identifiés.
+
+![GO dotplot](GO_Enrichment_dotplot.png)
+
+
