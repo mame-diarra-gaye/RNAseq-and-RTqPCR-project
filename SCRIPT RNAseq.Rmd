@@ -1,0 +1,216 @@
+---
+title: "TP_IGF_RNAseq"
+output: 
+  html_document:
+    toc: TRUE
+date: "2024-04-10"
+---
+
+# Table des matières
+1. [Création du DESeq dataset](#1)
+
+# Création du DESeq dataset <a name="1"></a>
+## Charger le tableau de count
+```{r}
+
+RNA_dat <- read.csv("RNAseq_countTable_new.csv", h = T, sep = ",", row.names = 1)
+head(RNA_dat)
+
+RNA_dat_mat <- as.matrix(RNA_dat)
+```
+
+## Charger les métadata
+```{r}
+sampleCondition <- read.csv("GSE30352_All_SRAs.txt", sep = "\t")
+head(sampleCondition)
+```
+
+## Créer l'objet DESeq
+```{r, message = FALSE, warning=FALSE, error=FALSE}
+library(DESeq2)
+```
+
+```{r}
+dds <- DESeqDataSetFromMatrix(RNA_dat_mat, sampleCondition, ~ source_name)
+dds
+```
+# Nettoyage des gènes avec peu de counts
+```{r}
+threshold <-  3
+keep <- rowSums(counts(dds)) >= threshold
+dds_clean <- dds[keep,]
+dds_clean
+```
+
+# Gène différentiellement exprimés
+```{r}
+dds$source_name <- factor(dds$source_name)
+dds <-DESeq(dds)
+```
+```{r}
+res <- results(object = dds, contrast = c("source_name", "Liver", "Cerebellum"))
+res
+```
+
+
+# Extract info from the DEGs analysis
+## a summary
+```{r}
+summary(res)
+```
+
+## The number of DEGs that are significative
+```{r}
+sum(res$padj < 0.05, na.rm = T)
+
+
+```
+
+## saving data
+```{r}
+resOrdered <- res[order(res$"log2FoldChange", decreasing = T), ]
+resOrdered
+write.csv(resOrdered, "Liver_vs_Cerebellum.csv")
+```
+
+
+# Data visualisation
+## PCA
+```{r}
+vsd <- vst(dds, blind=TRUE)
+plotPCA(vsd, intgroup = "source_name", pcsToUse = 1:2)
+
+p <- plotPCA(vsd, intgroup = "source_name", pcsToUse = 1:2)
+ggsave("PCA_Plot_source_name.png", plot = p, width = 7, height = 5, dpi = 300)
+
+```
+
+
+
+## MA plot
+```{r}
+DESeq2::plotMA(res)
+
+png("MA_plot_res.png", width = 800, height = 600, res = 120)
+plotMA(res)
+dev.off()
+
+```
+
+## MA plot with ggpubr
+```{r, height = 10}
+library(ggpubr)
+ggpubr::ggmaplot(res, size = 2, main = "DEGs Liver vs Cerebellum")
+
+p <- ggmaplot(res,
+              size = 2,
+              main = "DEGs Liver vs Cerebellum")
+
+ggsave("MA_plot_ggmaplot_DEGs_Liver_vs_Cerebellum.png", plot = p, width = 8, height = 6, dpi = 300)
+
+```
+
+## Heatmap on DEGs
+```{r}
+library(tidyverse)
+resDDS <- cbind.data.frame(res$log2FoldChange, res$padj)
+rownames(resDDS) <- rownames(res)
+colnames(resDDS) <- c("Log2FC", "padj") 
+head(resDDS)
+
+resSIG <- resDDS |> filter(padj < 0.05)
+head(resSIG)
+dim(resSIG)
+```
+
+## Plot the heatmap
+
+```{r}
+
+library(ComplexHeatmap)
+
+resSIGOrdered <- resSIG[order(abs(resSIG$Log2FC), decreasing = T),]
+resSIGOrdered_top30 <- resSIGOrdered[1:30,]
+
+RNA_dat <- as.data.frame(RNA_dat)
+
+RNA_dat_SIG <- RNA_dat |> filter(row.names(RNA_dat) %in% row.names(resSIGOrdered_top30))
+
+colnames(RNA_dat_SIG) <- dds$source_name
+
+hm <- Heatmap(matrix = scale(RNA_dat_SIG),
+               cluster_rows = TRUE,
+               clustering_method_rows = "ward.D2",
+               cluster_columns = TRUE,
+               clustering_method_columns = "ward.D2",
+               show_row_names = TRUE,
+               show_column_names = TRUE)
+hm
+
+
+
+png("heatmap_top30_DEGs.png", width = 800, height = 600, res = 150)
+draw(hm)
+dev.off()
+
+```
+
+
+```{r}
+hm <- Heatmap(matrix = scale(RNA_dat[1:100,]),
+               cluster_rows = TRUE,
+               clustering_method_rows = "ward.D2",
+               cluster_columns = TRUE,
+               clustering_method_columns = "ward.D2",
+               #show_row_names = TRUE,
+               show_column_names = TRUE)
+hm
+
+png("heatmap_top100_genes.png", width = 1000, height = 800, res = 150)
+draw(hm)
+dev.off()
+
+```
+
+
+```{r}
+library(goseq)
+library(clusterProfiler)
+library(org.Mm.eg.db)
+
+
+#Plot the GO
+bg_genes <- rownames(res) # for universe argt in the enrichGO function
+
+#choose the DEGs 
+resSIG <- resDDS |> filter(res$padj < 0.05 & res$log2FoldChange > 0)
+resSIG_symbol <- rownames(resSIG)
+
+#calculate the enriched gene ontology
+enrich_go <- enrichGO(
+  gene= resSIG_symbol, # genes name
+  OrgDb = org.Mm.eg.db, # the organisms
+  keyType = "SYMBOL", # SYMBOL is the gene annotation keytype (see the command below)
+  ont = "BP",  # Biological process
+  universe = bg_genes, # the background genes
+  qvalueCutoff = 0.05,
+  readable=TRUE
+)
+
+#plot them
+dotplot(enrich_go)
+
+
+keytypes(org.Mm.eg.db)
+
+
+# Sauvegarder le dernier graphique généré
+ggsave("GO_Enrichment_dotplot.png", width = 8, height = 6, dpi = 300)
+
+
+```
+
+
+
+
+
