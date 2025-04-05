@@ -9,7 +9,7 @@ Explorer les profils d’expression génique à partir de données RNA-Seq et RT
 
 ## Outils utilisés
 
--  R, tidyverse, dplyr, tidyr, ggplot2
+- DESeq2, tidyverse, dplyr, tidyr, ggplot2, ggpbur
   
 
 ## Ce que j’ai appris
