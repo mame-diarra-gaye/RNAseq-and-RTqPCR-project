@@ -55,56 +55,40 @@ Cette projection permet de mieux visualiser la contribution du troisième axe da
 
 ---
 
-##  Analyse RNA-Seq
+###  Visualisations RNA-Seq
 
-L’analyse RNA-Seq a été réalisée pour détecter les gènes différentiellement exprimés entre différents tissus (foie, rein, cervelet) à l’aide du package **DESeq2**. Plusieurs visualisations ont été produites pour interpréter les résultats.
+####  PCA plot selon le type de tissu (`source_name`)
 
----
-
-###  PCA sur les échantillons RNA-Seq
-
-Une analyse en composantes principales (ACP) a été effectuée après transformation par variance stabilisée (`vst`) pour explorer la variance globale des données.
+Ce graphique montre la séparation nette des échantillons selon leur origine (Cerebellum, Kidney, Liver).
 
 ![PCA RNAseq](PCA_Plot_source_name.png)
 
----
+####  MA plot des résultats DESeq2
 
-###  Plot MA
+Le MA plot montre la distribution des gènes en fonction de l’intensité moyenne et du log2 fold change. Les gènes significativement différenciés sont mis en évidence.
 
-Le graphique MA permet de visualiser les gènes exprimés différemment en fonction de leur niveau d'expression moyen.
+![MA plot DESeq2](MA_plot_res.png)
 
-![MA Plot](MA_plot_deseq2.png)
+####  MA plot amélioré avec `ggmaplot`
 
----
+Cette version plus esthétique permet de mieux visualiser les gènes up/down régulés.
 
-###  Volcano Plot (ggmaplot)
+![ggmaplot DEGs](MA_plot_ggmaplot_DEGs_Liver_vs_Cerebellum.png)
 
-Le `ggmaplot` met en évidence les gènes significativement sur- ou sous-exprimés. Les gènes les plus différenciés sont annotés.
+####  Heatmap des 30 gènes les plus différenciés
 
-![ggmaplot](ggmaplot_deseq2.png)
+Cette carte de chaleur représente les profils d'expression des 30 gènes les plus régulés entre les groupes.
 
----
+![Heatmap top30 DEGs](heatmap_top30_DEGs.png)
 
-###  Heatmap des 30 gènes les plus variables
+####  Heatmap des 100 gènes les plus variables
 
-Une carte de chaleur a été générée à partir des 30 gènes les plus variables parmi ceux significativement exprimés.
+Cette heatmap donne une vue globale de la variabilité des 100 gènes les plus exprimés.
 
-![Heatmap top30](heatmap_top30.png)
+![Heatmap top100 genes](heatmap_top100_genes.png)
 
----
+####  Enrichissement fonctionnel GO (Biological Process)
 
-###  Heatmap des 100 premiers gènes exprimés
+Les gènes différentiellement exprimés ont été soumis à une analyse d’enrichissement GO. Les processus biologiques enrichis sont représentés ci-dessous.
 
-Une deuxième carte de chaleur montre l’expression des 100 gènes les plus fortement exprimés, permettant d'observer les regroupements entre échantillons.
-
-![Heatmap 100 gènes](heatmap_top100.png)
-
----
-
-###  Enrichissement fonctionnel (GO)
-
-L’enrichissement en ontologies biologiques (GO) a été réalisé avec `clusterProfiler`. Les processus biologiques surreprésentés chez les gènes différentiellement exprimés ont été identifiés.
-
-![GO dotplot](GO_Enrichment_dotplot.png)
-
-
+![GO enrichment dotplot](GO_Enrichment_dotplot.png)
