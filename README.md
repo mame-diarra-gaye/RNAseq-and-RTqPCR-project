@@ -29,7 +29,8 @@ Ce projet a été réalisé à des fins d’apprentissage dans le cadre universi
 
 Ce graphique permet de comparer la distribution des valeurs de MedCt pour chaque échantillon. On observe une homogénéité des médianes, ce qui peut indiquer une bonne qualité de mesure.
 
-![Boxplot MedCt](figures/boxplot_MedCt_echantillons.png)
+![Boxplot MedCt](boxplot_medct_gdm.png)
+
 
 ---
 
@@ -40,15 +41,15 @@ L'ACP a été réalisée pour explorer la structure des données transcriptomiqu
 #### PC1 vs PC2 selon les échantillons  
 On observe une séparation nette entre certains groupes, suggérant des profils d'expression distincts entre échantillons.
 
-![PCA PC1-PC2 echantillon](figures/PCA_PC1_PC2_echantillon.png)
+![PC1-PC2 échantillons](PCA_PC1_PC2_par_echantillon.png)
 
 #### PC1 vs PC2 selon les réplicats biologiques  
 La superposition des réplicats dans l’espace factoriel confirme une bonne reproductibilité des mesures.
 
-![PCA PC1-PC2 bioRep](figures/PCA_PC1_PC2_bioRep.png)
+![PC1-PC2 bioRep](PCA_PC1_PC2_par_bioRep.png)
 
 #### PC1 vs PC3 selon les échantillons  
 Cette projection permet de mieux visualiser la contribution du troisième axe dans la différenciation des groupes.
 
-![PCA PC1-PC3 echantillon](figures/PCA_PC1_PC3_echantillon.png)
+![PC1-PC3 échantillons](PCA_PC1_PC3_par_echantillon.png)
 
