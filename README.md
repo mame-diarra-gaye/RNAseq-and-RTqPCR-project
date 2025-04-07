@@ -1,110 +1,90 @@
-# RNAseq-and-RTqPCR-project
+# 🧬 RNAseq-and-RTqPCR-project
 
-Script R et visualisations du projet combiné RNA-Seq et RT-qPCR mené en Licence 3.
-
-Ce dépôt présente un projet académique réalisé dans le cadre d’un TD sur l’analyse de données transcriptomiques et l’interprétation de profils d’expression génique à l’aide du langage R.
-
-##  Objectif
-
-Explorer et comparer les profils d’expression génique à partir de données RT-qPCR et RNA-Seq, à différents stades cellulaires ou types de tissus. L’objectif est d’utiliser des approches statistiques et graphiques pour extraire des informations biologiques pertinentes.
-
-##  Outils utilisés
-
-- DESeq2 : analyse différentielle des gènes à partir des données RNA-Seq
-- ggplot2, ggpubr : visualisations graphiques
-- tidyverse : manipulation de données
-- ComplexHeatmap : visualisation de matrices d’expression
-- clusterProfiler, org.Mm.eg.db : enrichissement fonctionnel (Gene Ontology)
-- goseq : analyse d’enrichissement GO complémentaire
-
-##  Ce que j’ai appris
-
-- Lire, nettoyer et formater des jeux de données transcriptomiques (RT-qPCR et RNA-Seq)
-- Réaliser des visualisations adaptées (boxplots, ACP, heatmaps, MA plot, GO enrichment…)
-- Utiliser `DESeq2` pour l’analyse différentielle
-- Identifier des gènes significativement exprimés
-- Réaliser des analyses d’enrichissement fonctionnel avec `clusterProfiler`
-- Interpréter des résultats biologiques à partir de données statistiques
-- Organiser un projet reproductible avec RMarkdown et GitHub
-
-
-Ce projet a été réalisé à des fins d’apprentissage dans le cadre d’un enseignement universitaire. 
-
-
-
-##  Visualisations
-
-###  Boîte à moustaches des valeurs MedCt par échantillon
-
-Ce graphique permet de comparer la distribution des valeurs de MedCt pour chaque échantillon. On observe une homogénéité des médianes, ce qui peut indiquer une bonne qualité de mesure.
-
-![Boxplot MedCt](boxplot_medct_gdm.png)
-
+Scripts R et visualisations issues d’un projet académique combinant RNA-Seq et RT-qPCR, réalisé en Licence 3 dans le cadre d’un TD sur l’analyse de données transcriptomiques.
 
 ---
 
-###  Analyse en composantes principales (ACP)
+## 🎯 Objectif du projet
 
-L'ACP a été réalisée pour explorer la structure des données transcriptomiques et identifier d’éventuelles séparations entre les échantillons.
+Explorer et comparer les profils d’expression génique à partir de données RT-qPCR et RNA-Seq, à différents stades cellulaires ou types de tissus.  
+L’objectif : mobiliser des outils statistiques et graphiques sous R pour identifier des régulations d’intérêt biologique.
+
+---
+
+## 🧰 Outils et packages utilisés
+
+- **DESeq2** : analyse différentielle des gènes (RNA-Seq)
+- **ggplot2**, **ggpubr** : visualisations graphiques
+- **tidyverse** : manipulation de données
+- **ComplexHeatmap** : représentation de matrices d’expression
+- **clusterProfiler**, **org.Mm.eg.db** : enrichissement fonctionnel (GO)
+- **goseq** : analyse GO complémentaire
+
+---
+
+## 🚀 Ce que ce projet m’a appris
+
+- Lire, nettoyer et formater des données transcriptomiques (RT-qPCR et RNA-Seq)
+- Réaliser des visualisations claires (boxplots, ACP, heatmaps, MA plot, GO enrichment…)
+- Identifier des gènes différentiellement exprimés à l’aide de `DESeq2`
+- Explorer des voies biologiques via des analyses d’enrichissement GO
+- Structurer un pipeline d’analyse reproductible avec **RMarkdown** et **GitHub**
+
+> Ce projet a été mené dans un cadre pédagogique, avec pour objectif de se former à l’analyse de données omiques.
+
+---
+
+## 📊 Visualisations
+
+### 🟦 RT-qPCR – Boîte à moustaches des valeurs MedCt
+
+Comparaison de la distribution des valeurs de MedCt par échantillon.
+
+![Boxplot MedCt](boxplot_medct_gdm.png)
+
+---
+
+### 🔎 Analyse en composantes principales (ACP)
 
 #### PC1 vs PC2 selon les échantillons  
-On observe une séparation nette entre certains groupes, suggérant des profils d'expression distincts entre échantillons.
-
+Séparation visible entre certains groupes, indiquant des profils d’expression distincts.  
 ![PC1-PC2 échantillons](PCA_PC1_PC2_par_echantillon.png)
 
 #### PC1 vs PC2 selon les réplicats biologiques  
-La superposition des réplicats dans l’espace factoriel confirme une bonne reproductibilité des mesures.
-
+Les réplicats se superposent bien → bonne reproductibilité.  
 ![PC1-PC2 bioRep](PCA_PC1_PC2_par_bioRep.png)
 
 #### PC1 vs PC3 selon les échantillons  
-Cette projection permet de mieux visualiser la contribution du troisième axe dans la différenciation des groupes.
-
+Visualisation complémentaire du 3e axe de variation.  
 ![PC1-PC3 échantillons](PCA_PC1_PC3_par_echantillon.png)
 
 ---
 
-###  Visualisations RNA-Seq
+## 🧬 RNA-Seq – Analyses différentielles & enrichissement
 
-####  PCA plot selon le type de tissu (`source_name`)
-
-Ce graphique montre la séparation nette des échantillons selon leur origine (Cerebellum, Kidney, Liver).
-
+### PCA plot selon le type de tissu (`source_name`)  
 ![PCA RNAseq](PCA_Plot_source_name.png)
 
-####  MA plot des résultats DESeq2
-
-Le MA plot montre la distribution des gènes en fonction de l’intensité moyenne et du log2 fold change. Les gènes significativement différenciés sont mis en évidence.
-
+### MA plot (résultats DESeq2)  
 ![MA plot DESeq2](MA_plot_res.png)
 
-####  MA plot amélioré avec `ggmaplot`
-
-Cette version plus esthétique permet de mieux visualiser les gènes up/down régulés.
-
+### MA plot amélioré (`ggmaplot`)  
 ![ggmaplot DEGs](MA_plot_ggmaplot_DEGs_Liver_vs_Cerebellum.png)
 
-####  Heatmap des 30 gènes les plus différenciés
-
-Cette carte de chaleur représente les profils d'expression des 30 gènes les plus régulés entre les groupes.
-
+### Heatmap des 30 gènes les plus différenciés  
 ![Heatmap top30 DEGs](heatmap_top30_DEGs.png)
 
-####  Heatmap des 100 gènes les plus variables
-
-Cette heatmap donne une vue globale de la variabilité des 100 gènes les plus exprimés.
-
+### Heatmap des 100 gènes les plus variables  
 ![Heatmap top100 genes](heatmap_top100_genes.png)
 
-####  Enrichissement fonctionnel GO (Biological Process)
-
-Les gènes différentiellement exprimés ont été soumis à une analyse d’enrichissement GO. Les processus biologiques enrichis sont représentés ci-dessous.
-
+### Dotplot – Enrichissement GO (Biological Process)  
 ![GO enrichment dotplot](GO_Enrichment_dotplot.png)
 
 ---
 
-##  Conclusion
+## ✅ Conclusion
 
-Ce projet m’a permis de développer des compétences pratiques en analyse transcriptomique avec R. L’approche combinée RNA-Seq et RT-qPCR m’a aidé à mieux comprendre la complémentarité entre technologies haut-débit et validation ciblée. Ce travail illustre les étapes clés d’un pipeline d’analyse omique reproductible.
+Ce projet m’a permis de développer des compétences concrètes en analyse de données transcriptomiques.  
+L’approche combinée RNA-Seq / RT-qPCR m’a aidée à mieux comprendre la complémentarité entre technologies haut-débit et validation ciblée.  
+Je retiens aussi l’importance de la reproductibilité, de la clarté des visualisations et de l’interprétation biologique des résultats.
 
