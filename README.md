@@ -4,7 +4,7 @@ Scripts R et visualisations issues d’un projet académique combinant RNA-Seq e
 
 ---
 
-## 🎯 Objectif du projet
+##  Objectif du projet
 
 Explorer et comparer les profils d’expression génique à partir de données RT-qPCR et RNA-Seq, à différents stades cellulaires ou types de tissus.  
 L’objectif : mobiliser des outils statistiques et graphiques sous R pour identifier des régulations d’intérêt biologique.
@@ -15,14 +15,14 @@ L’objectif : mobiliser des outils statistiques et graphiques sous R pour ident
 
 - **DESeq2** : analyse différentielle des gènes (RNA-Seq)
 - **ggplot2**, **ggpubr** : visualisations graphiques
-- **tidyverse** : manipulation de données
+- **tidyverse**, **dplyr**, **tidyr** : manipulation et nettoyage de données  
 - **ComplexHeatmap** : représentation de matrices d’expression
 - **clusterProfiler**, **org.Mm.eg.db** : enrichissement fonctionnel (GO)
 - **goseq** : analyse GO complémentaire
 
 ---
 
-## 🚀 Ce que ce projet m’a appris
+##  Ce que ce projet m’a appris
 
 - Lire, nettoyer et formater des données transcriptomiques (RT-qPCR et RNA-Seq)
 - Réaliser des visualisations claires (boxplots, ACP, heatmaps, MA plot, GO enrichment…)
@@ -42,9 +42,8 @@ Comparaison de la distribution des valeurs de MedCt par échantillon.
 
 ![Boxplot MedCt](boxplot_medct_gdm.png)
 
----
 
-### 🔎 Analyse en composantes principales (ACP)
+###  Analyse en composantes principales (ACP)
 
 #### PC1 vs PC2 selon les échantillons  
 Séparation visible entre certains groupes, indiquant des profils d’expression distincts.  
@@ -62,7 +61,7 @@ Visualisation complémentaire du 3e axe de variation.
 
 ## 🧬 RNA-Seq – Analyses différentielles & enrichissement
 
-### PCA plot selon le type de tissu (`source_name`)  
+### PCA plot selon le type de tissu  
 ![PCA RNAseq](PCA_Plot_source_name.png)
 
 ### MA plot (résultats DESeq2)  
@@ -74,7 +73,7 @@ Visualisation complémentaire du 3e axe de variation.
 ### Heatmap des 30 gènes les plus différenciés  
 ![Heatmap top30 DEGs](heatmap_top30_DEGs.png)
 
-### Heatmap des 100 gènes les plus variables  
+### Heatmap de 100 gènes sélectionnés  
 ![Heatmap top100 genes](heatmap_top100_genes.png)
 
 ### Dotplot – Enrichissement GO (Biological Process)  
@@ -82,7 +81,7 @@ Visualisation complémentaire du 3e axe de variation.
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 
 Ce projet m’a permis de développer des compétences concrètes en analyse de données transcriptomiques.  
 L’approche combinée RNA-Seq / RT-qPCR m’a aidée à mieux comprendre la complémentarité entre technologies haut-débit et validation ciblée.  
